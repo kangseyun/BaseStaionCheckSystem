@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.androidtown.basestationchecksystem.Activity.MainActivity"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    android:weightSum="1"
+    android:gravity="bottom">
+
+    <include layout="@layout/toolbar" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.849"
+        android:scaleType="fitXY"
+        android:src="@drawable/background"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:background="#2C2C2C"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp">
+
+        <Button
+            android:id="@+id/START"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btnround"
+            android:text="START!"
+            android:textColor="#FFFFFF"
+            android:textSize="17dp"
+            android:layout_weight="0.5"/>
+
+        <Button
+            android:id="@+id/STOP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btnround"
+            android:text="STOP!"
+            android:textColor="#FFFFFF"
+            android:textSize="17dp"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:orientation="horizontal"
+        android:background="#2C2C2C"
+        android:weightSum="1"
+        android:paddingTop="10dp">
+
+        <Button
+            android:id="@+id/dispatch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3333333333333"
+            android:background="#2C2C2C"
+            android:drawableTop="@drawable/dispatch"
+            android:text="발신연락처"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/reception"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3333333333333"
+            android:background="#2C2C2C"
+            android:drawableTop="@drawable/reception"
+            android:text="수신연락처"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3333333333333"
+            android:background="#2C2C2C"
+            android:drawableTop="@drawable/email"
+            android:text="E메일 전송"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+
+</LinearLayout>
