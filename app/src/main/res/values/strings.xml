@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BaseStationCheckSystem</string>
+    <string name="alert_title">보내는 사람의 주소와 비밀번호를 변경하시겠습니까?</string>
+    <string name="alert_message">(보내는 사람의 주소를 첫 입력이 아닌 변경을 원하시면 앱을 종료했다가 다시 실행하셔야 합니다.)</string>
+    <string name="malert_title">받는 사람의 주소를 변경하시겠습니까?</string>
+    <string name="malert_message">(주소가 틀릴시 전송이 안됩니다.)</string>
+
+</resources>
