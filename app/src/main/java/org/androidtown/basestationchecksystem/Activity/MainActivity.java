@@ -1,33 +1,50 @@
 package org.androidtown.basestationchecksystem.Activity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.androidtown.basestationchecksystem.Model.MyService;
+import org.androidtown.basestationchecksystem.BroadcastReceiver.CallReciverBroadcastReceiver;
+import org.androidtown.basestationchecksystem.Model.MyInfo;
+import org.androidtown.basestationchecksystem.Model.ReceptionData;
+import org.androidtown.basestationchecksystem.Service.CallService;
+import org.androidtown.basestationchecksystem.Service.MyService;
 import org.androidtown.basestationchecksystem.R;
+import org.androidtown.basestationchecksystem.Service.ReciveServiceList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button dispatch, reception, email, START, STOP;
     private Toolbar toolbar;
     private Realm realm;
-
+    private ReciveServiceList obj;
+    private CallReciverBroadcastReceiver callReciverBroadcastReceivers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         databaseInit();
 
+
+        Intent s = new Intent(this, CallService.class);
+        startService(s);
         dispatch = (Button) findViewById(R.id.dispatch);
         dispatch.setOnClickListener(this);
         reception = (Button) findViewById(R.id.reception);
@@ -44,8 +61,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
+
+    private ReciveServiceList getPhoneNumber() {
+        List<String> lists = new ArrayList<String>();
+
+        realm.beginTransaction();
+        RealmQuery<ReceptionData> query = realm.where(ReceptionData.class);
+        RealmResults<ReceptionData> result = query.findAll();
+
+        for (ReceptionData obj: result) {
+            lists.add("tel:"+obj.getText());
+        }
+
+        RealmQuery<MyInfo> query2 = realm.where(MyInfo.class);
+        MyInfo result2 = query2.findAll().first();
+        Log.i("info", result2.getEmail() + ", " + result2.getPassword());
+        obj = new ReciveServiceList(lists, result2.getEmail(), result2.getPassword());
+        realm.commitTransaction();
+
+
+        return obj;
+    }
+
     public void databaseInit() {
         Realm.init(this);
 
@@ -89,10 +127,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.START:
-                Log.d("test", "액티비티-서비스 시작버튼클릭");
-                Toast.makeText(this, "기지국 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
-                Intent intent4 = new Intent(this, MyService.class);
-                startService(intent4);
+                RealmQuery<ReceptionData> query = realm.where(ReceptionData.class);
+                RealmResults<ReceptionData> result = query.findAll();
+                if(result.size() == 0) {
+                    Toast toast = Toast.makeText(this, "연락처를 추가해주세요", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    Log.d("test", "액티비티-서비스 시작버튼클릭");
+                    Toast.makeText(this, "기지국 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
+                    Intent intent4 = new Intent(this, MyService.class);
+                    intent4.putExtra("phone", getPhoneNumber());
+                    startService(intent4);
+                }
                 break;
             case R.id.STOP:
                 Log.d("test", "액티비티-서비스 종료버튼클릭");
