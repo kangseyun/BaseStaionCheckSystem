@@ -1,16 +1,10 @@
 package org.androidtown.basestationchecksystem.Model;
 
-<<<<<<< HEAD
 import java.io.Serializable;
 
 import io.realm.RealmObject;
 
 public class ReceptionData extends RealmObject implements Serializable {
-=======
-import io.realm.RealmObject;
-
-public class ReceptionData extends RealmObject {
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
     private String text;
 
     public ReceptionData() {

@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 
 import com.android.internal.telephony.ITelephony;
 
-<<<<<<< HEAD
 import org.androidtown.basestationchecksystem.Model.DispatchData;
 import org.androidtown.basestationchecksystem.Model.GMailSender;
 import org.androidtown.basestationchecksystem.Model.MyInfo;
@@ -20,34 +19,18 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-=======
-import org.androidtown.basestationchecksystem.Model.GMailSender;
-
-import java.lang.reflect.Method;
-
-/**
- * Created by temp on 2017. 8. 21..
- */
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
 
 public class CallService extends IntentService {
     private Context mContext;
     private GMailSender sender;
-<<<<<<< HEAD
     private String id, password, to_id;
     private List<String> data = new ArrayList<>();
     private boolean flag = false;
     private TelephonyManager tm;
-=======
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
 
     public CallService() {
         super("CallService");
     }
-<<<<<<< HEAD
-=======
-리얼루다가 가서 하네
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
     class PhoneListener extends PhoneStateListener {
         String TAG = getClass().getName();
 
@@ -56,12 +39,9 @@ public class CallService extends IntentService {
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
-<<<<<<< HEAD
                     if(flag) {
                         setEmail();
                     }
-=======
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
                     Log.d(TAG, "IDLE");
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
@@ -69,7 +49,6 @@ public class CallService extends IntentService {
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
                     Log.d(TAG, "RINGING");
-<<<<<<< HEAD
                     // 수신 연락처에서 체크하기
                     if(check(incomingNumber)) { // 없으면 전화 끊기
                         connectCall();
@@ -77,48 +56,6 @@ public class CallService extends IntentService {
                     } else { // 있으면 전화 받기
                         cancelCall();
                         flag = true;
-=======
-
-                    if(true) { // 없으면 전화 끊기
-                        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                        try {
-                            Class c = Class.forName(tm.getClass().getName());
-                            Method m = c.getDeclaredMethod("getITelephony");
-                            m.setAccessible(true);
-                            ITelephony telephonyService = (ITelephony) m.invoke(tm);
-                            telephonyService.endCall();
-                            Log.i("end","end");
-                        } catch (Exception e) {
-                            Log.i("Error", e.toString());
-                            e.printStackTrace();
-                        }
-                    } else { // 있으면 전화 받기
-                        //                    try
-//                    {
-//                        Intent new_intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-//                        new_intent.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK));
-//                        mContext.sendOrderedBroadcast(new_intent, null);
-//                        Log.i("call", "caa123");
-//                        new_intent = null;
-//                        setEmail(1);
-
-//                    } catch (Exception e)
-//                    {
-//                        e.printStackTrace();
-//                    }
-//
-//                    try
-//                    {
-//                        Intent buttonUp = new Intent(Intent.ACTION_MEDIA_BUTTON);
-//                        buttonUp.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK));
-//                        mContext.sendOrderedBroadcast(buttonUp, null);
-//                        Log.i("call", "call123");
-//                        buttonUp = null;
-//                    } catch (Exception e)
-//                    {
-//                        e.printStackTrace();
-//                    }
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
                     }
                     break;
             }
@@ -127,7 +64,6 @@ public class CallService extends IntentService {
 
     PhoneListener phoneListener = null;
 
-<<<<<<< HEAD
     private boolean check(String number) {
         boolean result = false;
         for (String curVal : data){
@@ -179,8 +115,6 @@ public class CallService extends IntentService {
         }
     }
 
-=======
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
     @Override
     public void onCreate() {
         super.onCreate();
@@ -190,7 +124,6 @@ public class CallService extends IntentService {
     }
 
     @Override
-<<<<<<< HEAD
     public void onDestroy() {
         // 서비스가 종료될 때 실행
         super.onDestroy();
@@ -208,11 +141,6 @@ public class CallService extends IntentService {
 
         if (phoneListener == null) {
             tm = (TelephonyManager) getApplicationContext().getSystemService(TELEPHONY_SERVICE);
-=======
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (phoneListener == null) {
-            TelephonyManager tm = (TelephonyManager) getApplicationContext().getSystemService(TELEPHONY_SERVICE);
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
             phoneListener = new PhoneListener();
             tm.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
@@ -226,29 +154,17 @@ public class CallService extends IntentService {
 
     }
 
-<<<<<<< HEAD
     private void setEmail() { // 이메일보내기 (보내는 사람 주소는 첫입력을 제외하고 변경하려면 앱을 종료했다가 다시 실행해야함
         sender = new GMailSender(id, password); // 보낼 이메일 주소 아이디, 비밀번호
-=======
-    public void setEmail(int cellid) { // 이메일보내기 (보내는 사람 주소는 첫입력을 제외하고 변경하려면 앱을 종료했다가 다시 실행해야함
-        sender = new GMailSender("dcp.k953@gmail.com", "Rokcc590eks@"); // 보낼 이메일 주소 아이디, 비밀번호
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
         new Thread(new Runnable() {
             public void run() {
                 // TODO Auto-generated method stub
                 try {
-<<<<<<< HEAD
                     Log.i("seyun",id+password);
                     sender.sendMail("기지국 변화", // subject.getText().toString(),
                             "전화 받기 성공", // body.getText().toString(),
                             id, // from id
                             to_id // to id
-=======
-                    sender.sendMail("기지국 변화", // subject.getText().toString(),
-                            "현 기지국 " + "temp" + "에서 " + "temp" + "로 변화", // body.getText().toString(),
-                            "dcp.k953@gmail.com", // from.getText().toString(),
-                            "tpdbs953@naver.com" // to.getText().toString()
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
                     );
                     sleep(3000);
                 } catch (Exception e) {
@@ -260,9 +176,5 @@ public class CallService extends IntentService {
                 // TODO Auto-generated method stub
             }
         }).start();
-<<<<<<< HEAD
-=======
-
->>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
     }
 }
