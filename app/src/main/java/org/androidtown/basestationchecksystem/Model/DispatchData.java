@@ -1,8 +1,10 @@
 package org.androidtown.basestationchecksystem.Model;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 
-public class DispatchData extends RealmObject {
+public class DispatchData extends RealmObject implements Serializable  {
     private String text;
     public DispatchData() {
 

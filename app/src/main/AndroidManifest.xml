@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.androidtown.basestationchecksystem">
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
-    <USES-PERMISSION android:name="android.permission.MODIFY_PHONE_STATE" />
-    <USES-PERMISSION android:name="android.permission.READ_PHONE_STATE" />
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -29,9 +25,18 @@
         <activity android:name=".Activity.EmailActivity" />
 
         <service
-            android:name=".Model.MyService"
+            android:name=".Service.MyService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+
+        </service>
+        <service
+            android:name=".Service.CallService"
+            android:enabled="true"
+            android:exported="true">
+
+        </service>
+
     </application>
 
 </manifest>

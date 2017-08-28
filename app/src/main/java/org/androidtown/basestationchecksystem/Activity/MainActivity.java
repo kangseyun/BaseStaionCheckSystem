@@ -10,16 +10,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.androidtown.basestationchecksystem.Model.MyService;
+import org.androidtown.basestationchecksystem.Model.DispatchData;
+import org.androidtown.basestationchecksystem.Model.MyInfo;
+import org.androidtown.basestationchecksystem.Model.ReceptionData;
+import org.androidtown.basestationchecksystem.Model.toEmail;
+import org.androidtown.basestationchecksystem.Service.CallService;
+import org.androidtown.basestationchecksystem.Service.MyService;
 import org.androidtown.basestationchecksystem.R;
+import org.androidtown.basestationchecksystem.Service.ReciveServiceList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button dispatch, reception, email, START, STOP;
+    private Button dispatch, reception, email, START, STOP, CALL_START, CALL_STOP;
     private Toolbar toolbar;
     private Realm realm;
+    private ReciveServiceList obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +51,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         STOP = (Button) findViewById(R.id.STOP);
         STOP.setOnClickListener(this);
 
+        CALL_START = (Button) findViewById(R.id.call_START);
+        CALL_STOP = (Button) findViewById(R.id.call_STOP);
+
+        CALL_START.setOnClickListener(this);
+        CALL_STOP.setOnClickListener(this);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("기지국");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
+
+    private ReciveServiceList getPhoneNumber(int id) {
+        List<String> lists = new ArrayList<String>();
+
+        realm.beginTransaction();
+
+        if(id == 0) {
+            RealmQuery<DispatchData> query = realm.where(DispatchData.class);
+            RealmResults<DispatchData> result = query.findAll();
+
+            for (DispatchData data:
+                    result) {
+                lists.add(data.getText());
+            }
+        } else {
+            RealmQuery<ReceptionData> query = realm.where(ReceptionData.class);
+            RealmResults<ReceptionData> result = query.findAll();
+
+            for (ReceptionData obj : result) {
+                lists.add("tel:" + obj.getText());
+            }
+        }
+
+        RealmQuery<MyInfo> query2 = realm.where(MyInfo.class);
+        MyInfo result2 = query2.findAll().first();
+
+        RealmQuery<toEmail> query3 = realm.where(toEmail.class);
+        toEmail result3 = query3.findAll().first();
+
+        Log.i("info", result2.getEmail() + ", " + result2.getPassword());
+        obj = new ReciveServiceList(lists, result2.getEmail(), result2.getPassword(), result3.getTo_email());
+        realm.commitTransaction();
+
+
+        return obj;
+    }
+
     public void databaseInit() {
         Realm.init(this);
 
@@ -89,16 +143,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.START:
-                Log.d("test", "액티비티-서비스 시작버튼클릭");
-                Toast.makeText(this, "기지국 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
-                Intent intent4 = new Intent(this, MyService.class);
-                startService(intent4);
+                RealmQuery<ReceptionData> query = realm.where(ReceptionData.class);
+                RealmResults<ReceptionData> result = query.findAll();
+                if(result.size() == 0) {
+                    Toast toast = Toast.makeText(this, "연락처를 추가해주세요", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    Log.d("test", "액티비티-서비스 시작버튼클릭");
+                    Toast.makeText(this, "기지국 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
+                    Intent intent4 = new Intent(this, MyService.class);
+                    intent4.putExtra("phone", getPhoneNumber(1));
+                    startService(intent4);
+                }
                 break;
             case R.id.STOP:
                 Log.d("test", "액티비티-서비스 종료버튼클릭");
                 Toast.makeText(this, "기지국 감지가 중지되었습니다.",Toast.LENGTH_SHORT).show();
                 Intent intent5 = new Intent(this, MyService.class);
                 stopService(intent5);
+                break;
+            case R.id.call_START:
+                Intent callStart = new Intent(this, CallService.class);
+                callStart.putExtra("phone", getPhoneNumber(0));
+                startService(callStart);
+                Toast.makeText(this, "전화 수신 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.call_STOP:
+                Intent callStop = new Intent(this, CallService.class);
+                stopService(callStop);
+                Toast.makeText(this, "전화 수신 감지가 중지되었습니다.",Toast.LENGTH_SHORT).show();
                 break;
         }
     }

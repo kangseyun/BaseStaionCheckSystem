@@ -19,6 +19,49 @@
         android:scaleType="fitXY"
         android:src="@drawable/background"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="전화 받기"
+        android:textColor="#fff"
+        android:textSize="19dp"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:background="#2C2C2C"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp">
+
+        <Button
+            android:id="@+id/call_START"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btnround"
+            android:text="START!"
+            android:textColor="#FFFFFF"
+            android:textSize="17dp"
+            android:layout_weight="0.5"/>
+
+        <Button
+            android:id="@+id/call_STOP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btnround"
+            android:text="STOP!"
+            android:textColor="#FFFFFF"
+            android:textSize="17dp"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="전화 걸기"
+        android:textColor="#fff"
+        android:textSize="19dp"
+        android:textStyle="bold"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,7 +107,7 @@
             android:layout_weight="0.3333333333333"
             android:background="#2C2C2C"
             android:drawableTop="@drawable/dispatch"
-            android:text="발신연락처"
+            android:text="수신연락처"
             android:textColor="#FFFFFF" />
 
         <Button
@@ -74,7 +117,7 @@
             android:layout_weight="0.3333333333333"
             android:background="#2C2C2C"
             android:drawableTop="@drawable/reception"
-            android:text="수신연락처"
+            android:text="발신연락처"
             android:textColor="#FFFFFF" />
 
         <Button
