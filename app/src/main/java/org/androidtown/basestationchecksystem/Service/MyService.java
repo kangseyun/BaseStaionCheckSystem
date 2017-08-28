@@ -27,12 +27,12 @@ public class MyService extends Service {
     private String mcellID, mlac, FirstcellID;
     private int count = 0;
     private List<String> data;
-    private Handler mHandler, mHandler2;
+    private Handler mHandler;
     private Runnable runnable;
     private String id, password;
     private String to_id;
     private String TAG = this.getClass().getSimpleName();
-
+    private boolean Flag = true;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -53,7 +53,7 @@ public class MyService extends Service {
         to_id = s.getTo_email();
 
 
-        BaseSation();
+        callTask();
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -63,41 +63,34 @@ public class MyService extends Service {
     public void onDestroy() {
         mHandler.removeCallbacks(runnable);
         mHandler.removeCallbacksAndMessages(null);
-        mHandler2.removeCallbacks(runnable);
-        mHandler2.removeCallbacksAndMessages(null);
+        Flag = false;
         super.onDestroy();
     }
 
-    public void BaseSation() {
-        TelephonyManager tm =
-                (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
-
-        int cellID = location.getCid();
-        int lac = location.getLac();
-
-        mcellID = Integer.toString(cellID);
-        mlac = Integer.toString(lac);
-        FirstcellID = Integer.toString(cellID);
-
-        Random r = new Random();
-        setTelephone(data.get(r.nextInt(data.size())));
-    }
-
-
-    public void setTelephone(String number) { // 전화자동걸기,끊기
-        Log.i("call", "call");
-        Intent intent = new Intent("android.intent.action.CALL", Uri.parse(number));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent); // 전화걸을 전화번호
-
-        mHandler2 = new Handler(Looper.getMainLooper());
-        mHandler2.postDelayed(new Runnable() {
+    public void callTask() {
+        mHandler = new Handler(Looper.getMainLooper());
+        runnable = new Runnable() {
             @Override
             public void run() {
                 Random rands = new Random();
-                int randomNum = rands.nextInt(24000 - 18000 + 1) + 18000;
-                Log.i("time", randomNum + "");
+                int randomNum = rands.nextInt(240000 - 180000 + 1) + 180000;
+
+                Random r = new Random();
+                TelephonyManager tm =
+                        (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
+
+                int cellID = location.getCid();
+                int lac = location.getLac();
+
+                mcellID = Integer.toString(cellID);
+                mlac = Integer.toString(lac);
+                FirstcellID = Integer.toString(cellID);
+
+                Intent intent = new Intent("android.intent.action.CALL", Uri.parse(data.get(r.nextInt(data.size()))));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
                 new CountDownTimer(randomNum, 1000) {
                     public void onTick(long millisUntilFinished) {
 
@@ -112,9 +105,10 @@ public class MyService extends Service {
                             m.setAccessible(true);
                             ITelephony telephonyService = (ITelephony) m.invoke(tm);
                             telephonyService.endCall(); //전화 끊기
-
                             setEmail(); // email post
-                            BaseSation();
+                            if(Flag) {
+                                mHandler.postDelayed(runnable, 3000);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -122,8 +116,9 @@ public class MyService extends Service {
                     }
                 }.start();
             }
-        }, 0);
+        };
 
+        mHandler.postDelayed(runnable, 1000);
     }
 
     private void setEmail() {
