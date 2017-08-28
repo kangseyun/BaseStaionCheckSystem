@@ -103,7 +103,6 @@ public class CallService extends IntentService {
             e.printStackTrace();
         }
 
-
         try
         {
             Intent buttonUp = new Intent(Intent.ACTION_MEDIA_BUTTON);

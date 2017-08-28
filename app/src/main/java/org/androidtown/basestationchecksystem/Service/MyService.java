@@ -27,7 +27,7 @@ public class MyService extends Service {
     private String mcellID, mlac, FirstcellID;
     private int count = 0;
     private List<String> data;
-    private Handler mHandler;
+    private Handler mHandler, mHandler2;
     private Runnable runnable;
     private String id, password;
     private String to_id;
@@ -52,22 +52,19 @@ public class MyService extends Service {
         password = s.getPassword();
         to_id = s.getTo_email();
 
-        mHandler = new Handler(Looper.getMainLooper());
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                BaseSation();
-                mHandler.postDelayed(this, 15000);
-            }
-        };
 
-        mHandler.postDelayed(runnable, 0);
+        BaseSation();
+
+
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         mHandler.removeCallbacks(runnable);
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler2.removeCallbacks(runnable);
+        mHandler2.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
@@ -89,20 +86,25 @@ public class MyService extends Service {
 
 
     public void setTelephone(String number) { // 전화자동걸기,끊기
+        Log.i("call", "call");
         Intent intent = new Intent("android.intent.action.CALL", Uri.parse(number));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent); // 전화걸을 전화번호
 
-        Handler mHandler = new Handler(Looper.getMainLooper());
-        mHandler.postDelayed(new Runnable() {
+        mHandler2 = new Handler(Looper.getMainLooper());
+        mHandler2.postDelayed(new Runnable() {
             @Override
             public void run() {
-                new CountDownTimer(10000, 1000) { //(밀리초(현재10초),??) 걸고 끊기
+                Random rands = new Random();
+                int randomNum = rands.nextInt(24000 - 18000 + 1) + 18000;
+                Log.i("time", randomNum + "");
+                new CountDownTimer(randomNum, 1000) {
                     public void onTick(long millisUntilFinished) {
 
                     }
 
                     public void onFinish() {
+                        Log.i("finish", "finish");
                         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         try {
                             Class c = Class.forName(tm.getClass().getName());
@@ -112,9 +114,11 @@ public class MyService extends Service {
                             telephonyService.endCall(); //전화 끊기
 
                             setEmail(); // email post
+                            BaseSation();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
                     }
                 }.start();
             }
@@ -132,7 +136,7 @@ public class MyService extends Service {
                     sender.sendMail("기지국 변화", // subject.getText().toString(),
                             "현 기지국 : " + FirstcellID, // body.getText().toString(),
                             id, // from id
-                            "tpdbs953@naver.com" // to id
+                            to_id // to id
                     );
                     sleep(3000);
                 } catch (Exception e) {
