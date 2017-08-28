@@ -19,6 +19,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/background"/>
 
+<<<<<<< HEAD
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,6 +63,8 @@
         android:textColor="#fff"
         android:textSize="19dp"
         android:textStyle="bold"/>
+=======
+>>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,7 +110,11 @@
             android:layout_weight="0.3333333333333"
             android:background="#2C2C2C"
             android:drawableTop="@drawable/dispatch"
+<<<<<<< HEAD
             android:text="수신연락처"
+=======
+            android:text="발신연락처"
+>>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
             android:textColor="#FFFFFF" />
 
         <Button
@@ -117,7 +124,11 @@
             android:layout_weight="0.3333333333333"
             android:background="#2C2C2C"
             android:drawableTop="@drawable/reception"
+<<<<<<< HEAD
             android:text="발신연락처"
+=======
+            android:text="수신연락처"
+>>>>>>> 9b84b0cf3dc3f56879485cc5d330adf14cac83b7
             android:textColor="#FFFFFF" />
 
         <Button
