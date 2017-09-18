@@ -10,21 +10,27 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.melnykov.fab.FloatingActionButton;
 
 import org.androidtown.basestationchecksystem.Adapter.DispatchAdapter;
+import org.androidtown.basestationchecksystem.ContactParser;
 import org.androidtown.basestationchecksystem.Model.DispatchData;
+import org.androidtown.basestationchecksystem.Model.ReceptionData;
 import org.androidtown.basestationchecksystem.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-public class DispatchActivity extends AppCompatActivity {
+import static android.R.attr.data;
+
+public class DispatchActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private DispatchAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -33,6 +39,11 @@ public class DispatchActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Realm realm;
     final Context context = this;
+    private ContactParser contactParser;
+    private Button sync;
+    private List<String> data = new ArrayList<String>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +51,15 @@ public class DispatchActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_dispatch);
         fab = (FloatingActionButton) findViewById(R.id.fab_dispatch) ;
         fab.attachToRecyclerView(mRecyclerView);
+
         setRecyclerView();
         setAddPhoneNumber();
         setToolbar();
+
+
+        sync = (Button) findViewById(R.id.dispatch_sync);
+        sync.setOnClickListener(this);
+
         realm = Realm.getDefaultInstance();
         getData();
     }
@@ -182,6 +199,34 @@ public class DispatchActivity extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
             return false;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        switch (id) {
+            case R.id.dispatch_sync:
+                contactParser = new ContactParser();
+                data = contactParser.load();
+
+                realm.beginTransaction();
+
+                for (String obj: data) {
+                    DispatchData realmObj = realm.createObject(DispatchData.class); // 새 객체 만들기
+                    realmObj.setText(obj);
+                }
+
+                realm.commitTransaction();
+
+                for (String result:
+                     data) {
+                    myDataset.add(new DispatchData(result));
+                }
+                
+                mAdapter.notifyDataSetChanged();
+                break;
         }
     }
 }

@@ -10,22 +10,25 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.melnykov.fab.FloatingActionButton;
 
 import org.androidtown.basestationchecksystem.Adapter.ReceptionAdapter;
+import org.androidtown.basestationchecksystem.ContactParser;
 import org.androidtown.basestationchecksystem.Model.ReceptionData;
 import org.androidtown.basestationchecksystem.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 
-public class ReceptionActivity extends AppCompatActivity {
+public class ReceptionActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private ReceptionAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -34,6 +37,9 @@ public class ReceptionActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Realm realm;
     final Context context = this;
+    private ContactParser contactPaser;
+    private Button sync;
+    private List<String> data = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,11 @@ public class ReceptionActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_reception);
         fab = (FloatingActionButton) findViewById(R.id.fab_reception) ;
         fab.attachToRecyclerView(mRecyclerView);
+        sync = (Button) findViewById(R.id.reception_sync);
+        sync.setOnClickListener(this);
+
+
+
         setRecyclerView();
         setAddPhoneNumber();
         setToolbar();
@@ -105,13 +116,13 @@ public class ReceptionActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(
                                             DialogInterface dialog, int id) {
-                                        final RealmResults<ReceptionData> result = realm.where(ReceptionData.class)
-                                                .equalTo("text", myDataset.get(position).getText()).findAllAsync();
+                                        final ReceptionData result = realm.where(ReceptionData.class)
+                                                .equalTo("text", myDataset.get(position).getText()).findAllAsync().first();
                                         realm.beginTransaction();
-                                        result.deleteFirstFromRealm();
+                                        result.deleteFromRealm();
                                         realm.commitTransaction();
-                                                myDataset.remove(position);
-                                                mAdapter.notifyDataSetChanged();
+                                        myDataset.remove(position);
+                                        mAdapter.notifyDataSetChanged();
 
                                     }
                                 })
@@ -185,6 +196,27 @@ public class ReceptionActivity extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
             return false;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.reception_sync:
+                contactPaser = new ContactParser();
+                data = contactPaser.load();
+
+                realm.beginTransaction();
+
+                for (String obj: data) {
+                    ReceptionData realmObj = realm.createObject(ReceptionData.class); // 새 객체 만들기
+                    realmObj.setText(obj);
+                }
+
+                realm.commitTransaction();
+                mAdapter.notifyDataSetChanged();
+                break;
         }
     }
 }
