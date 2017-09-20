@@ -17,6 +17,7 @@ import com.melnykov.fab.FloatingActionButton;
 
 import org.androidtown.basestationchecksystem.Adapter.ReceptionAdapter;
 import org.androidtown.basestationchecksystem.ContactParser;
+import org.androidtown.basestationchecksystem.Model.DispatchData;
 import org.androidtown.basestationchecksystem.Model.ReceptionData;
 import org.androidtown.basestationchecksystem.R;
 
@@ -50,7 +51,6 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
         fab.attachToRecyclerView(mRecyclerView);
         sync = (Button) findViewById(R.id.reception_sync);
         sync.setOnClickListener(this);
-
 
 
         setRecyclerView();
@@ -204,7 +204,7 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
         int id = v.getId();
         switch (id) {
             case R.id.reception_sync:
-                contactPaser = new ContactParser();
+                contactPaser = new ContactParser(0);
                 data = contactPaser.load();
 
                 realm.beginTransaction();
@@ -215,6 +215,12 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 realm.commitTransaction();
+
+                for (String result:
+                        data) {
+                    myDataset.add(new ReceptionData(result));
+                }
+
                 mAdapter.notifyDataSetChanged();
                 break;
         }

@@ -18,17 +18,20 @@ import java.util.List;
 
 public class ContactParser {
     private File file;
-    private FileReader fr = null ;
-    private char[] cbuf = new char[512];
-    int size = 0 ;
     private File sdcard = null;
     private List<String> data = new ArrayList<String>();
+    private int flag;
 
-    public ContactParser() {
+    public ContactParser(int flag) {
         String sdPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
 
         sdcard = Environment.getExternalStorageDirectory();
-        file = new File(sdPath, "Contact.txt");
+        if(flag == 0) {
+            file = new File(sdPath, "Contact.txt");
+
+        } else {
+            file = new File(sdPath, "Email.txt");
+        }
     }
 
     public List<String> load() {

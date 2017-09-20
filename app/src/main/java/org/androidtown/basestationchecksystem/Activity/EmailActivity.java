@@ -5,25 +5,33 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import org.androidtown.basestationchecksystem.ContactParser;
 import org.androidtown.basestationchecksystem.Model.MyInfo;
 import org.androidtown.basestationchecksystem.Model.ReceptionData;
 import org.androidtown.basestationchecksystem.Model.toEmail;
 import org.androidtown.basestationchecksystem.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class EmailActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText memail_from, memail_to, mpassword_from;
-    private Button mchange_from, mchange_to;
+    private Button mchange_from, mchange_to, sync;
     private String semail_from, spassword_from, semail_to;
     private Toolbar toolbar;
     private Realm realm;
+    private ContactParser contactParser;
+    private List<String> ParserResult = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +40,8 @@ public class EmailActivity extends AppCompatActivity implements View.OnClickList
 
         realm = Realm.getDefaultInstance();
 
+
+        sync = (Button) findViewById(R.id.email_sync);
         memail_from = (EditText) findViewById(R.id.email_from);
         memail_to = (EditText) findViewById(R.id.email_to);
         mpassword_from = (EditText) findViewById(R.id.password_from);
@@ -39,7 +49,7 @@ public class EmailActivity extends AppCompatActivity implements View.OnClickList
         mchange_from.setOnClickListener(this);
         mchange_to = (Button) findViewById(R.id.change_to);
         mchange_to.setOnClickListener(this);
-
+        sync.setOnClickListener(this);
         realm.beginTransaction();
         final RealmResults<MyInfo> results = realm.where(MyInfo.class).findAll();
         final RealmResults<toEmail> results2 = realm.where(toEmail.class).findAll();
@@ -140,6 +150,49 @@ public class EmailActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
                 malert.show();
+                break;
+            case R.id.email_sync:
+                contactParser = new ContactParser(1);
+                try {
+                    ParserResult = contactParser.load();
+
+                    memail_from.setText(ParserResult.get(0));
+                    memail_to.setText(ParserResult.get(1));
+                    mpassword_from.setText(ParserResult.get(2));
+
+                    realm.beginTransaction();
+                    final RealmResults<MyInfo> results = realm.where(MyInfo.class).findAll();
+
+                    if(results.size() == 0) {
+                        MyInfo data = realm.createObject(MyInfo.class); // 새 객체 만들기
+                        data.setEmail(ParserResult.get(0));
+                        data.setPassword(ParserResult.get(2));
+                    } else {
+                        MyInfo info = results.get(0);
+                        info.setPassword(ParserResult.get(2));
+                        info.setEmail(ParserResult.get(0));
+                    }
+
+
+                    final RealmResults<toEmail> results2 = realm.where(toEmail.class).findAll();
+
+                    if(results2.size() == 0) {
+                        toEmail data = realm.createObject(toEmail.class); // 새 객체 만들기
+                        data.setTo_email(ParserResult.get(1));
+                    } else {
+                        toEmail info = results2.get(0);
+                        info.setTo_email(ParserResult.get(1));
+                    }
+
+
+                    realm.commitTransaction();
+                } catch (IndexOutOfBoundsException ex) {
+                    Log.i("error", ex.toString());
+                    Toast.makeText(this, "Email.txt 를 확인해주세요.",Toast.LENGTH_SHORT).show();
+
+                }
+
+
                 break;
         }
     }

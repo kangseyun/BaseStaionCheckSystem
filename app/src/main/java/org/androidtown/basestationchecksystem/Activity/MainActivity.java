@@ -86,15 +86,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        RealmQuery<MyInfo> query2 = realm.where(MyInfo.class);
-        MyInfo result2 = query2.findAll().first();
+        try {
+            RealmQuery<MyInfo> query2 = realm.where(MyInfo.class);
+            MyInfo result2 = query2.findAll().first();
+            RealmQuery<toEmail> query3 = realm.where(toEmail.class);
+            toEmail result3 = query3.findAll().first();
 
-        RealmQuery<toEmail> query3 = realm.where(toEmail.class);
-        toEmail result3 = query3.findAll().first();
+            Log.i("info", result2.getEmail() + ", " + result2.getPassword());
+            obj = new ReciveServiceList(lists, result2.getEmail(), result2.getPassword(), result3.getTo_email());
+            realm.commitTransaction();
 
-        Log.i("info", result2.getEmail() + ", " + result2.getPassword());
-        obj = new ReciveServiceList(lists, result2.getEmail(), result2.getPassword(), result3.getTo_email());
-        realm.commitTransaction();
+        } catch (Exception e) {
+            Log.i("error", e.toString());
+            return null;
+        }
+
+
 
 
         return obj;
@@ -149,11 +156,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast toast = Toast.makeText(this, "연락처를 추가해주세요", Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    Log.d("test", "액티비티-서비스 시작버튼클릭");
-                    Toast.makeText(this, "기지국 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
-                    Intent intent4 = new Intent(this, MyService.class);
-                    intent4.putExtra("phone", getPhoneNumber(1));
-                    startService(intent4);
+                    if(getPhoneNumber(0) == null) {
+                        Toast.makeText(this, "email을 입력해주세요", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Log.d("test", "액티비티-서비스 시작버튼클릭");
+                        Toast.makeText(this, "기지국 감지가 시작되었습니다.", Toast.LENGTH_SHORT).show();
+                        Intent intent4 = new Intent(this, MyService.class);
+                        intent4.putExtra("phone", getPhoneNumber(1));
+                        startService(intent4);
+                    }
                 }
                 break;
             case R.id.STOP:
@@ -163,10 +174,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stopService(intent5);
                 break;
             case R.id.call_START:
-                Intent callStart = new Intent(this, CallService.class);
-                callStart.putExtra("phone", getPhoneNumber(0));
-                startService(callStart);
-                Toast.makeText(this, "전화 수신 감지가 시작되었습니다.",Toast.LENGTH_SHORT).show();
+
+                if (getPhoneNumber(0) != null) {
+                    Intent callStart = new Intent(this, CallService.class);
+                    callStart.putExtra("phone", getPhoneNumber(0));
+                    startService(callStart);
+                    Toast.makeText(this, "전화 수신 감지가 시작되었습니다.", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this, "전화버호또는 이메일을 입력해주세요", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.call_STOP:
                 Intent callStop = new Intent(this, CallService.class);

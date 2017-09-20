@@ -208,7 +208,7 @@ public class DispatchActivity extends AppCompatActivity implements View.OnClickL
 
         switch (id) {
             case R.id.dispatch_sync:
-                contactParser = new ContactParser();
+                contactParser = new ContactParser(0);
                 data = contactParser.load();
 
                 realm.beginTransaction();
@@ -224,7 +224,7 @@ public class DispatchActivity extends AppCompatActivity implements View.OnClickL
                      data) {
                     myDataset.add(new DispatchData(result));
                 }
-                
+
                 mAdapter.notifyDataSetChanged();
                 break;
         }
