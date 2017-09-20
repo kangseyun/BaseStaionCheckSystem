@@ -109,6 +109,7 @@ public class MyService extends Service {
                 mlac = Integer.toString(lac);
                 FirstcellID = Integer.toString(cellID);
 
+
                 Intent intent = new Intent("android.intent.action.CALL", Uri.parse(data.get(r.nextInt(data.size()))));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
