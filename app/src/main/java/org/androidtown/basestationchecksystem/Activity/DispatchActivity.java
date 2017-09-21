@@ -40,7 +40,7 @@ public class DispatchActivity extends AppCompatActivity implements View.OnClickL
     private Realm realm;
     final Context context = this;
     private ContactParser contactParser;
-    private Button sync;
+    private Button sync, delete;
     private List<String> data = new ArrayList<String>();
 
 
@@ -51,6 +51,9 @@ public class DispatchActivity extends AppCompatActivity implements View.OnClickL
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_dispatch);
         fab = (FloatingActionButton) findViewById(R.id.fab_dispatch) ;
         fab.attachToRecyclerView(mRecyclerView);
+
+        delete = (Button) findViewById(R.id.dispatch_delete);
+        delete.setOnClickListener(this);
 
         setRecyclerView();
         setAddPhoneNumber();
@@ -226,6 +229,20 @@ public class DispatchActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 mAdapter.notifyDataSetChanged();
+                break;
+            case R.id.dispatch_delete:
+                final RealmResults<DispatchData> results = realm.where(DispatchData.class).findAll();
+
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        results.deleteAllFromRealm();
+                    }
+                });
+
+                myDataset.clear();
+                mAdapter.notifyDataSetChanged();
+
                 break;
         }
     }

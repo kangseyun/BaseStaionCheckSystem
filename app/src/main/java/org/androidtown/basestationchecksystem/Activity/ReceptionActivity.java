@@ -39,7 +39,7 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
     private Realm realm;
     final Context context = this;
     private ContactParser contactPaser;
-    private Button sync;
+    private Button sync, delete;
     private List<String> data = new ArrayList<String>();
 
     @Override
@@ -221,6 +221,19 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
                     myDataset.add(new ReceptionData(result));
                 }
 
+                mAdapter.notifyDataSetChanged();
+                break;
+            case R.id.reception_delete:
+                final RealmResults<ReceptionData> results = realm.where(ReceptionData.class).findAll();
+
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        results.deleteAllFromRealm();
+                    }
+                });
+
+                myDataset.clear();
                 mAdapter.notifyDataSetChanged();
                 break;
         }

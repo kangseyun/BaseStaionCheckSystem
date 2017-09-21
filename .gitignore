@@ -4,10 +4,10 @@
 # Built application files
 *.apk
 *.ap_
+.idea/vcs.xml
 
-
-./idea/*
-./idea
+.idea/*
+.idea
 # Files for the ART/Dalvik VM
 *.dex
 
