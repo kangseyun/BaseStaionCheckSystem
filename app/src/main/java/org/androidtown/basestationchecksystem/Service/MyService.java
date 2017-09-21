@@ -18,6 +18,7 @@ import com.android.internal.telephony.ITelephony;
 import org.androidtown.basestationchecksystem.Model.GMailSender;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -55,11 +56,9 @@ public class MyService extends Service {
         id = s.getEmail();
         password = s.getPassword();
         to_id = s.getTo_email();
-
+        Collections.shuffle(data);
 
         callTask();
-
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -86,9 +85,7 @@ public class MyService extends Service {
                 int cellID = 0;
                 int lac = 0;
 
-
                 switch( tm.getPhoneType()) {
-
                     case PHONE_TYPE_GSM: {
                         GsmCellLocation cellLocation = (GsmCellLocation) tm.getCellLocation();
                         cellID = cellLocation.getCid();
@@ -101,7 +98,6 @@ public class MyService extends Service {
                         lac = cellLocation.getBaseStationLatitude();
                     }
                     default: {
-                        // can't do cell location
                     }
                 }
 
@@ -120,7 +116,6 @@ public class MyService extends Service {
                     }
 
                     public void onFinish() {
-                        Log.i("finish", "finish");
                         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         try {
                             Class c = Class.forName(tm.getClass().getName());
