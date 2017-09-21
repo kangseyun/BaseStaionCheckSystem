@@ -51,7 +51,8 @@ public class ReceptionActivity extends AppCompatActivity implements View.OnClick
         fab.attachToRecyclerView(mRecyclerView);
         sync = (Button) findViewById(R.id.reception_sync);
         sync.setOnClickListener(this);
-
+        delete = (Button) findViewById(R.id.reception_delete);
+        delete.setOnClickListener(this);
 
         setRecyclerView();
         setAddPhoneNumber();
